@@ -52,21 +52,22 @@ https://www.bbc.com/news/articles/cy890gpqw1po
 Example 2 real news:
 https://www.cnn.com/2025/01/26/politics/colombia-tariffs-trump-deportation-flights/index.html
 
+![Image](https://github.com/user-attachments/assets/13b8286a-077d-4709-af6a-ff5f991a05f7)
 
-FakeNewsDetector/
-│
-├── app.py               # Streamlit app (main interface)
-├── train.py             # Script to train the model
-├── evaluate.py          # Evaluate the trained model
-├── model.py             # Model architecture or pipeline definition
-├── utils.py             # Helper functions (e.g., preprocessing, loading data)
-├── requirements.txt     # Dependencies (streamlit, pandas, transformers, etc.)
-├── data/                # Data directory
-│   ├── Fake.csv
-│   └── True.csv
-└── models/              # Directory to save trained models
-    └── fake_news_model.pkl
+FakeNewsDetector/ <br/>
+│ <br/>
+├── app.py               # Streamlit app (main interface)  <br/>
+├── train.py             # Script to train the model  <br/>
+├── evaluate.py          # Evaluate the trained model  <br/>
+├── model.py             # Model architecture or pipeline definition  <br/>
+├── utils.py             # Helper functions (e.g., preprocessing, loading data)  <br/>
+├── requirements.txt     # Dependencies (streamlit, pandas, transformers, etc.)  <br/>
+├── data/                # Data directory  <br/>
+│   ├── Fake.csv  <br/>
+│   └── True.csv  <br/>
+└── models/              # Directory to save trained models  <br/>
+    └── fake_news_model.pkl  <br/>
 
 
-dataset
-https://www.kaggle.com/datasets/emineyetm/fake-news-detection-datasets
+dataset  <br/>
+https://www.kaggle.com/datasets/emineyetm/fake-news-detection-datasets  <br/>
