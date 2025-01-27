@@ -3,5 +3,7 @@ newspaper3k
 transformers
 torch
 nltk
+pandas
+scikit-learn
 # Optional for explanation
 shap

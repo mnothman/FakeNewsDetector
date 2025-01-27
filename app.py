@@ -2,22 +2,15 @@ import streamlit as st
 import re
 import nltk
 import requests
+import pickle
 from newspaper import Article
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from transformers import pipeline
 
-# --------------------------
-# 1. Pre-trained Classification Pipeline
-# --------------------------
-# For demo purposes, we're using a generic text-classification model (DistilBERT).
-# In a real-world project, you'd fine-tune your own model on a Fake News dataset.
-
-
-# For now use pre trained model, train own model later
-model_name = "distilbert-base-uncased-finetuned-sst-2-english" 
-classifier = pipeline("text-classification", model=model_name, truncation=True)
-
+#  No longer pretrained model (switched from DistilBERT to fine-tuned model on Fake News dataset)
+with open("models/fake_news_model.pkl", "rb") as model_file:
+    model, vectorizer = pickle.load(model_file)
 
 def extract_article_content(url):
     """
@@ -39,27 +32,17 @@ def preprocess_text(text):
 
     # Remove non-alphabetic characters, tokenize, and remove stopwords
     text = re.sub(r'[^a-zA-Z\s]', '', text, re.I|re.A)
-    text = text.lower()
-    text = text.strip()
-
+    text = text.lower().strip()
     tokens = word_tokenize(text)
-
     tokens = [word for word in tokens if word not in stop_words]
-
-    # Rejoin tokens
-    processed_text = " ".join(tokens)
-
-    return processed_text
+    return " ".join(tokens)
 
 # Use Streamlit for UI
 # Scrapes content from article link, preprocesses text, runs through text classification model
 def main():
-    st.title("Fake News Detector (Demo)")
-    st.markdown(
-        """
-        Demo app
-        """
-    )
+    st.title("Fake News Detector")
+    st.markdown("Enter a news article URL to classify it as real or fake.")
+
 
     url = st.text_input("Enter the URL of the news article:")
 
@@ -85,30 +68,19 @@ def main():
 
         st.write("**Step 3:** Classifying the article...")
 
-        # Handle longer text by truncating first 512 tokens 
-        tokens = clean_text.split()
-        truncated_text = " ".join(tokens[:512])
+        # Vectorize text using our trained vectorizer
+        vectorized_text = vectorizer.transform([clean_text])
 
-        # Perform classification
-        prediction = classifier(truncated_text)[0]
-        label = prediction["label"]
-        score = prediction["score"]
+        # Perform classification and confidence estimation
+        prediction = model.predict(vectorized_text)[0]
+        probabilities = model.predict_proba(vectorized_text)[0]
+        confidence = max(probabilities)
 
-        if label == "POSITIVE":
-            st.success(f"**Predicted Label:** REAL NEWS (Confidence: {score:.2f})")
-        else:
-            st.warning(f"**Predicted Label:** FAKE NEWS (Confidence: {score:.2f})")
+        label = "REAL NEWS" if prediction == 1 else "FAKE NEWS"
 
-        st.write("**Raw classification result:**", prediction)
+        st.success(f"**Predicted Label:** {label}")
+        st.info(f"**Confidence:** {confidence:.2f}")
 
-        st.write("---")
-        st.write("### Explanation")
-        st.markdown(
-            "explain 1"
-            "explain 2"
-        )
-        if st.button("Run SHAP Explanation (May be slow)"):
-            st.info("Running SHAP explanation...")
 
 if __name__ == "__main__":
     main()
