@@ -4,21 +4,31 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report
 import pickle
+from utils import balance_dataset, preprocess_text
 
 def load_data():
-    fake = pd.read_csv("data/News_dataset/Fake.csv")
-    true = pd.read_csv("data/News_dataset/True.csv")
+    try:
+        fake = pd.read_csv("data/News_dataset/Fake.csv")
+        true = pd.read_csv("data/News_dataset/True.csv")
+    except FileNotFoundError as e:
+        print("Dataset files not found. Please check the paths.")
+        raise e
 
-    fake['label'] = 0  # Fake news
-    true['label'] = 1  # Real news
 
-    # Combine the datasets and then shuffle
-    data = pd.concat([fake, true], ignore_index=True)
-    data = data.sample(frac=1, random_state=42)
+    fake['label'] = 0
+    true['label'] = 1
 
+    fake = fake.sample(n=5000, random_state=42)
+    true = true.sample(n=5000, random_state=42)
+
+    data = balance_dataset(fake, true, sample_size=len(true))
     return data
 
 def preprocess_and_vectorize(data):
+    print("Preprocessing started...")
+    data['text'] = data['text'].apply(preprocess_text)
+    print("Preprocessing complete!")
+
     vectorizer = TfidfVectorizer(max_features=5000, stop_words='english')
     X = vectorizer.fit_transform(data['text'])
     y = data['label']

@@ -1,2 +1,3 @@
 venv
 data/News_dataset
+__pycache__/

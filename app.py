@@ -5,8 +5,10 @@ import requests
 import pickle
 from newspaper import Article
 from nltk.corpus import stopwords
+from nltk.stem import SnowballStemmer
 from nltk.tokenize import word_tokenize
 from transformers import pipeline
+from utils import preprocess_text, balance_dataset
 
 #  No longer pretrained model (switched from DistilBERT to fine-tuned model on Fake News dataset)
 with open("models/fake_news_model.pkl", "rb") as model_file:
@@ -26,23 +28,9 @@ def extract_article_content(url):
         # Maybe log here
         return None
 
-# Clean, tokenize, and remove stop words from raw article text
-def preprocess_text(text):
-    stop_words = set(stopwords.words('english'))
-
-    # Remove non-alphabetic characters, tokenize, and remove stopwords
-    text = re.sub(r'[^a-zA-Z\s]', '', text, re.I|re.A)
-    text = text.lower().strip()
-    tokens = word_tokenize(text)
-    tokens = [word for word in tokens if word not in stop_words]
-    return " ".join(tokens)
-
-# Use Streamlit for UI
-# Scrapes content from article link, preprocesses text, runs through text classification model
 def main():
     st.title("Fake News Detector")
     st.markdown("Enter a news article URL to classify it as real or fake.")
-
 
     url = st.text_input("Enter the URL of the news article:")
 
