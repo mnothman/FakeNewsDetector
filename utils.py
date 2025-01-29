@@ -23,6 +23,7 @@ def preprocess_text(text):
 def balance_dataset(fake, true, sample_size=None):
     if sample_size:
         fake = fake.sample(n=sample_size, random_state=42)
+        true = true.sample(n=sample_size, random_state=42)
 
     print(f"Fake news: {len(fake)}, True news: {len(true)}")
     combined_data = pd.concat([fake, true], ignore_index=True)

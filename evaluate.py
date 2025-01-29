@@ -19,7 +19,7 @@ def evaluate_model():
 
     # Evaluate
     predictions = model.predict(X_test)
-    print(classification_report(y_test, predictions))
+    print(classification_report(y_test, predictions, zero_division=0))
 
 if __name__ == "__main__":
     evaluate_model()
